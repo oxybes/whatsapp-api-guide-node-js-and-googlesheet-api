@@ -1,0 +1,18 @@
+{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "description": "Simple bot for chat-api.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "O.X.",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "googleapis": "^39.2.0",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.2"
+  }
+}

@@ -22,7 +22,7 @@ app.post('/', async function (req, res) {
         const body = String(data.messages[i].body.toLowerCase());
         const chatId = data.messages[i].chatId;
         splitBody = body.split(' ');
-        command = splitBody[0]
+        command = splitBody[0];
 
         if(data.messages[i].fromMe)
             return;

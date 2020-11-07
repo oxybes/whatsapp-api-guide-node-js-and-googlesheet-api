@@ -241,26 +241,25 @@ app.post('/', async function (req, res) {
 ```js
 app.post('/', async function (req, res) {
     const data = req.body;
-    
     for (var i in data.messages) {
         const body = String(data.messages[i].body.toLowerCase());
         const chatId = data.messages[i].chatId;
         splitBody = body.split(' ');
-        command = splitBody[0]
+        command = splitBody[0];
 
         if(data.messages[i].fromMe)
             return;
         
         if(command == 'помощь')
         {
-            await apiChatApi('sendMessage', {chatid:chatId, body: menu_text});
+            await apiChatApi('sendMessage', {chatId:chatId, body: menu_text});
         }
         else if (command == 'запись')
         {
             name = splitBody[1];
             phone = splitBody[2];
             await googleapi.updateSheet(name, phone)
-            await apiChatApi('sendMessage', {chatid:chatId, body: 'Успешно записано'})
+            await apiChatApi('sendMessage', {chatId:chatId, body: 'Успешно записано'})
         }
 
         else if (command == 'инфо')
@@ -272,7 +271,14 @@ app.post('/', async function (req, res) {
             else{
                 result = await getInfoDataFromSheet(splitBody[1]);
             }
-            await apiChatApi('sendMessage', {chatId:chatId, body: result})
+            x = await apiChatApi('sendMessage', {chatId:chatId, body: result})
+			console.log(x);
+        }
+		
+		else if (command == 'файл')
+        {
+            linkFile = (await googleapi.getValues('Data!D2'))[0][0];
+            x = await apiChatApi('sendFile', {chatId:chatId, body: linkFile, 'filename':'testfile'})
         }
 
         else if (command == 'рассылка'){
@@ -282,10 +288,10 @@ app.post('/', async function (req, res) {
                 await apiChatApi('sendMessage', {phone:entry[1], body: `Привет, ${entry[0]}, это тестовая рассылка.`});
             });
         }
-
+        
         else
         {
-            await apiChatApi('sendMessage', {chatid:chatId, body: menu_text})
+            await apiChatApi('sendMessage', {chatId:chatId, body: menu_text})
         }
     }
     res.send('Ok');
@@ -332,6 +338,18 @@ async function getInfoDataFromSheet(range){
 }
 ```
 
+Для отправки файла мы берем прямую ссылку на файл из ячейки таблицы и отправляем с помощью метода sendFile
+```js
+		else if (command == 'файл')
+        {
+            linkFile = (await googleapi.getValues('Data!D2'))[0][0];
+            x = await apiChatApi('sendFile', {chatId:chatId, body: linkFile, 'filename':'testfile'})
+        }
+```
+![](https://ia.wampi.ru/2020/11/07/image16b40bb643bbb16f.png)
+
+
+
 Для рассылки мы просто проходимся по всей таблице и отправляем сообщения на указанные номера
 ```js
 else if (command == 'рассылка'){
@@ -359,19 +377,19 @@ Webhook решает проблему с задержкой на отклик в
 ![](https://ia.wampi.ru/2020/11/06/imageea130a8fae7b34da.png)
 
 И вот, что вышло
-![](https://ia.wampi.ru/2020/11/06/imagea64d39a2c45949b6.png)
+![](https://ia.wampi.ru/2020/11/07/image02fe9b95f6651d10.png)
+Помощь
 
 ![](https://ia.wampi.ru/2020/11/06/imageef722241f4661cf0.png)
-
+Запись
 ![](https://ia.wampi.ru/2020/11/06/image0c48824290b221ce.png)
+Результат в таблице
 
 ![](https://ia.wampi.ru/2020/11/06/image4ecf8422ee79cf3f.png)
+Инфо
 
 Для рассылки в таблицу добавил свой собственный номер в две строки
 ![](https://ia.wampi.ru/2020/11/06/imageff273839612fb264.png)
 
-
-
-
-
-
+Получить файл
+![](https://ia.wampi.ru/2020/11/07/imagefd3ecdd7af052a05.png)

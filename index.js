@@ -29,14 +29,14 @@ app.post('/', async function (req, res) {
         
         if(command == 'помощь')
         {
-            await apiChatApi('sendMessage', {chatid:chatId, body: menu_text});
+            await apiChatApi('sendMessage', {chatId:chatId, body: menu_text});
         }
         else if (command == 'запись')
         {
             name = splitBody[1];
             phone = splitBody[2];
             await googleapi.updateSheet(name, phone)
-            await apiChatApi('sendMessage', {chatid:chatId, body: 'Успешно записано'})
+            await apiChatApi('sendMessage', {chatId:chatId, body: 'Успешно записано'})
         }
 
         else if (command == 'инфо')
@@ -48,7 +48,14 @@ app.post('/', async function (req, res) {
             else{
                 result = await getInfoDataFromSheet(splitBody[1]);
             }
-            await apiChatApi('sendMessage', {chatid:chatId, body: result})
+            x = await apiChatApi('sendMessage', {chatId:chatId, body: result})
+			console.log(x);
+        }
+		
+		else if (command == 'файл')
+        {
+            linkFile = (await googleapi.getValues('Data!D2'))[0][0];
+            x = await apiChatApi('sendFile', {chatId:chatId, body: linkFile, 'filename':'testfile'})
         }
 
         else if (command == 'рассылка'){
@@ -61,7 +68,7 @@ app.post('/', async function (req, res) {
         
         else
         {
-            await apiChatApi('sendMessage', {chatid:chatId, body: menu_text})
+            await apiChatApi('sendMessage', {chatId:chatId, body: menu_text})
         }
     }
     res.send('Ok');
